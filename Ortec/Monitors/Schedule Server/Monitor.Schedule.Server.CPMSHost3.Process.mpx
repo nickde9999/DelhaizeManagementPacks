@@ -1,0 +1,82 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  A MONITOR for existence or number of processes and will generate an alert when outside the set range
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  ProcessName - Is the name of the process with NO SPACES OR SPECIAL CHARACTERS ALLOWED such as "TiWorker.exe"    
+
+  Version: 1.1
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  Delhaize
+  ORTEC.Schedule.Server
+  Delhaize.ORTEC.Schedule.Servers.Class
+  CPMSHost3.exe
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"	
+  RequiredReference: Alias="MSPL", ID="Microsoft.SystemCenter.ProcessMonitoring.Library"
+
+@@Author=Kevin Holman@@  
+-->
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor" Accessibility="Public" Enabled="true" Target="Delhaize.ORTEC.Schedule.Servers.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="false" Priority="Normal" TypeID="MSPL!Microsoft.SystemCenter.Process.ProcessInstanceCountMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor.AlertMessage">
+          <AlertOnState>Error</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>  <!-- Common options for AlertSeverity are MatchMonitorHealth, Information, Warning, Error -->
+          <AlertParameters>
+            <AlertParameter1>$Data[Default='0']/Context/DataItem/Item0Context/DataItem/ProcessInformations/ProcessInformation[./ProcessName ='CPMSHost3.exe']/ActiveInstanceCount$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="OK" MonitorTypeStateID="InsideRangeState" HealthState="Success" />
+          <OperationalState ID="Error" MonitorTypeStateID="OutsideRangeState" HealthState="Error" />  <!-- HealthState = Warning or Error -->
+        </OperationalStates>
+        <Configuration>
+          <ProcessName>cpmshost3.exe</ProcessName>    
+          <Frequency>60</Frequency>    
+          <MinInstanceCount>2</MinInstanceCount>   
+          <MaxInstanceCount>2</MaxInstanceCount>   
+          <InstanceCountOutOfRangeTimeThresholdInSeconds>60</InstanceCountOutOfRangeTimeThresholdInSeconds>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>  
+    <StringResources>
+      <StringResource ID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor.AlertMessage" />
+    </StringResources>
+  </Presentation>  
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>  
+        <DisplayString ElementID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor">
+          <Name>Process Count for CPMSHost3.exe Monitor</Name>
+          <Description>Number of specified processes is outside of the specified threshold.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor" SubElementID="OK">
+          <Name>Process count inside the valid range (Success)</Name>
+        </DisplayString>
+        <DisplayString ElementID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor" SubElementID="Error">
+          <Name>Process count outside the valid range (Error)</Name>
+        </DisplayString>
+		<DisplayString ElementID="Delhaize.ORTEC.Schedule.Server.CPMSHost3.exe.Count.Monitor.AlertMessage">
+          <Name>ORD Productie, ALERTA EU902783-BUC [schedule server], CPMS Host 3GB mode (U)</Name>
+          <Description>
+            Procesele CPMS Host 3GB mode (U) sunt mai putin de 2 active.
+            Contactati echipa de suport ORTEC!
+            Instance count of the CPMSHost3.exe process is outside specified range with a value of {0} .</Description>
+        </DisplayString>
+	  </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

@@ -1,0 +1,308 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  A MONITOR which runs a timed PowerShell script as the DataSource and outputs a propertybag as GOOD or BAD to drive Monitor state and ALERT
+Version: 1.1
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  Delhaize
+  Sharepoint
+  Delhaize.SharepointServer.Class
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"	
+--> 
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="Delhaize.Free.Memory.Three.State.Monitor.DataSourceModuleType" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="Delhaize.Free.Memory.Three.State.Monitor.ProbeActionModuleType">
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="Delhaize.Free.Memory.Three.State.Monitor.ProbeActionModuleType" Accessibility="Internal" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>Delhaize.Free.Memory.Three.State.Monitor.DataSourceModuleType.ps1</ScriptName>
+                <ScriptBody>
+                  #=================================================================================
+                  # Monitors Free Physical
+                  #=================================================================================
+                  # Constants section - modify stuff here:
+
+                  $errorPct = [double]"90"
+                  $warningPct = [double]"80"
+
+                  # Assign script name variable for use in event logging
+                  $ScriptName = "Delhaize.Free.Memory.Three.State.Monitor.DataSourceModuleType.ps1"
+                  #=================================================================================
+
+                  # Gather script start time
+                  $StartTime = Get-Date
+
+                  # Gather who the script is running as
+                  $WhoAmI = whoami
+
+                  # Load MomScript API and PropertyBag function
+                  $momapi = new-object -comObject 'MOM.ScriptAPI'
+                  $bag = $momapi.CreatePropertyBag()
+
+                  #Log script event that we are starting task
+                  $momapi.LogScriptEvent($ScriptName,1234,0, "Starting script")
+
+                  #Set the condition = bad.  This represents your script finding something wrong
+                  $strCondition = "Bad"
+
+                  # Gather the statistics
+                  $os = Get-Ciminstance Win32_OperatingSystem
+                  $pctFree = [math]::Round(($os.FreePhysicalMemory/$os.TotalVisibleMemorySize)*100,2)
+
+                  switch ($pctFree)
+                  {
+                  {$_ -ge $errorPct} {$strcondition="Error";break}
+                  {$_ -ge $warningPct} {$strcondition="Warning";break}
+                  {$_ -lt $warningPct} {$strcondition="Good";break}
+                  }
+
+                  #Check the value of $strCondition
+                  if ($strCondition -eq "Good")
+                  {
+                  $momapi.LogScriptEvent($ScriptName,1234,0, "Good Condition Found")
+                  $bag.AddValue('Result','GoodCondition')
+                  }
+                  else
+                  {
+                  $momapi.LogScriptEvent($ScriptName,1234,0, "Bad Condition Found")
+                  $bag.AddValue('Result','BadCondition')
+                  }
+
+                  switch ($strCondition)
+                  {
+                  "Good"    {$momapi.LogScriptEvent($ScriptName,1234,0, "Good Condition Found");$bag.AddValue('Result','GoodCondition');$bag.AddValue('pctFree',$pctFree)}
+                  "Error"   {$momapi.LogScriptEvent($ScriptName,1234,0, "Error Condition Found");$bag.AddValue('Result','WarningCondition');$bag.AddValue('pctFree',$pctFree)}
+                  "Warning" {$momapi.LogScriptEvent($ScriptName,1234,0, "Warning Condition Found");$bag.AddValue('Result','ErrorCondition');$bag.AddValue('pctFree',$pctFree)}
+
+                  }
+
+                  #Log an event for script ending and total execution time.
+                  $EndTime = Get-Date
+                  $ScriptTime = ($EndTime - $StartTime).TotalSeconds
+                  $momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+
+                  #Output the propertybag
+                  $bag
+                </ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="Delhaize.Free.Memory.Three.State.Monitor.UnitMonitorType" Accessibility="Internal">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="GoodCondition" NoDetection="false" />
+          <MonitorTypeState ID="WarningCondition" NoDetection="false" />  
+          <MonitorTypeState ID="ErrorCondition" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DataSource" TypeID="Delhaize.Free.Memory.Three.State.Monitor.DataSourceModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+            </DataSource>
+            <ProbeAction ID="Probe" TypeID="Delhaize.Free.Memory.Three.State.Monitor.ProbeActionModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+            </ProbeAction>
+            <ConditionDetection ID="GoodConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">GoodCondition</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="WarningConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">WarningCondition</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            
+            <ConditionDetection ID="ErrorConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">ErrorCondition</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="WarningCondition">
+              <Node ID="WarningConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="ErrorCondition">
+              <Node ID="ErrorConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+
+          <OnDemandDetections>
+            <OnDemandDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="WarningCondition">
+              <Node ID="WarningConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+          <OnDemandDetection MonitorTypeStateID="ErrorCondition">
+              <Node ID="ErrorConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+           </OnDemandDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="Delhaize.Free.Memory.Three.State.Monitor" Accessibility="Public" Enabled="false" Target="Windows!Delhaize.SharepointServer.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Delhaize.Free.Memory.Three.State.Monitor.UnitMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="Delhaize.Free.Memory.Three.State.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>  <!-- Common options for AlertSeverity are MatchMonitorHealth, Information, Warning, Error -->
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/Property[@Name='Result'&gt;']$</AlertParameter1>
+            <AlertParameter2>$Data/Context/Property[@Name='pctFree'&gt;']$</AlertParameter2>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="GoodCondition" MonitorTypeStateID="GoodCondition" HealthState="Success" />
+          <OperationalState ID="WarningCondition" MonitorTypeStateID="WarningCondition" HealthState="Warning" />  <!-- HealthState = Warning or Error -->
+          <OperationalState ID="ErrorCondition" MonitorTypeStateID="ErrorCondition" HealthState="Error" />  <!-- HealthState = Warning or Error -->
+        </OperationalStates>
+        <Configuration>
+          <TimeoutSeconds>120</TimeoutSeconds>
+          <IntervalSeconds>3600</IntervalSeconds>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="Delhaize.Free.Memory.Three.State.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="Delhaize.Free.Memory.Three.State.Monitor">
+          <Name>Physical Memory Free Monitor</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Delhaize.Free.Memory.Three.State.Monitor" SubElementID="GoodCondition">
+          <Name>Good Condition</Name>
+        </DisplayString>
+        <DisplayString ElementID="Delhaize.Free.Memory.Three.State.Monitor" SubElementID="WarningCondition">
+          <Name>The Available Memory is low</Name>
+        </DisplayString>
+        <DisplayString ElementID="Delhaize.Free.Memory.Three.State.Monitor" SubElementID="ErrorCondition">
+          <Name>The Available Memory is critically low</Name>
+        </DisplayString>
+
+
+        <DisplayString ElementID="Delhaize.Free.Memory.Three.State.Monitor.Alert.Message">
+          <Name>Physical Memory Free Monitor: Failure</Name>
+          <Description>The memory is in a {0} . There is {1} percent of memory available</Description>
+        </DisplayString>		
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

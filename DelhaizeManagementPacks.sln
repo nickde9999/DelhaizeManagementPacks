@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "TrackWise", "TrackWise\TrackWise.mpproj", "{5352C993-E8A2-428D-A77D-460D16705BB1}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Guard", "Guard\Guard.mpproj", "{0EBF2958-8F53-485B-B54C-4A6636BB92C7}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Delhaize StoreOffice", "Delhaize StoreOffice\Delhaize StoreOffice.mpproj", "{C50B8A85-9091-42D5-BE9E-B961E850CD8C}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "DelhaizeSharePoint", "DelhaizeSharePoint\DelhaizeSharePoint.mpproj", "{E75F3C83-EABC-4E1D-80A4-BC8F64441268}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "DelhaizeClasses", "DelhaizeClasses\DelhaizeClasses.mpproj", "{AF5D4A00-B8D7-4E02-949C-21A54394B9DF}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "SMB v1", "SMB v1\SMB v1.mpproj", "{2DA585F0-C2C3-46E2-A638-61AEFA30AB7D}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Delhaize SharePoint Synthetic Monitoring", "Delhaize SharePoint Synthetic Monitoring\Delhaize SharePoint Synthetic Monitoring.mpproj", "{56F98558-26A5-4F6A-8267-5D9A3E5D380C}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Ortec", "Ortec\Ortec.mpproj", "{B1E033D9-19EB-40C2-AA35-D5E988914916}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Delhaize EMCS", "Delhaize EMCS\Delhaize EMCS.mpproj", "{D04D0247-182E-4695-88C8-3645483543D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3EA9576F-8A56-4C7B-92BC-8EA28389D675}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Documents\Delhaize.VMware.Inventory.xml = ..\..\..\Documents\Delhaize.VMware.Inventory.xml
+	EndProjectSection
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Delhaize VMware Computers", "Delhaize VMware Computers\Delhaize VMware Computers.mpproj", "{D053851D-62B3-4502-A29D-CC1FA2D73533}"
+EndProject
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "Delhaize Cluster Monitoring", "Delhaize Cluster Monitoring\Delhaize Cluster Monitoring.mpproj", "{DD986674-864A-44E4-A5C2-8B26479F3117}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5352C993-E8A2-428D-A77D-460D16705BB1}.Debug|x86.ActiveCfg = Debug|x86
+		{5352C993-E8A2-428D-A77D-460D16705BB1}.Debug|x86.Build.0 = Debug|x86
+		{5352C993-E8A2-428D-A77D-460D16705BB1}.Release|x86.ActiveCfg = Release|x86
+		{5352C993-E8A2-428D-A77D-460D16705BB1}.Release|x86.Build.0 = Release|x86
+		{0EBF2958-8F53-485B-B54C-4A6636BB92C7}.Debug|x86.ActiveCfg = Debug|x86
+		{0EBF2958-8F53-485B-B54C-4A6636BB92C7}.Debug|x86.Build.0 = Debug|x86
+		{0EBF2958-8F53-485B-B54C-4A6636BB92C7}.Release|x86.ActiveCfg = Release|x86
+		{0EBF2958-8F53-485B-B54C-4A6636BB92C7}.Release|x86.Build.0 = Release|x86
+		{C50B8A85-9091-42D5-BE9E-B961E850CD8C}.Debug|x86.ActiveCfg = Debug|x86
+		{C50B8A85-9091-42D5-BE9E-B961E850CD8C}.Debug|x86.Build.0 = Debug|x86
+		{C50B8A85-9091-42D5-BE9E-B961E850CD8C}.Release|x86.ActiveCfg = Release|x86
+		{C50B8A85-9091-42D5-BE9E-B961E850CD8C}.Release|x86.Build.0 = Release|x86
+		{E75F3C83-EABC-4E1D-80A4-BC8F64441268}.Debug|x86.ActiveCfg = Debug|x86
+		{E75F3C83-EABC-4E1D-80A4-BC8F64441268}.Debug|x86.Build.0 = Debug|x86
+		{E75F3C83-EABC-4E1D-80A4-BC8F64441268}.Release|x86.ActiveCfg = Release|x86
+		{E75F3C83-EABC-4E1D-80A4-BC8F64441268}.Release|x86.Build.0 = Release|x86
+		{AF5D4A00-B8D7-4E02-949C-21A54394B9DF}.Debug|x86.ActiveCfg = Debug|x86
+		{AF5D4A00-B8D7-4E02-949C-21A54394B9DF}.Debug|x86.Build.0 = Debug|x86
+		{AF5D4A00-B8D7-4E02-949C-21A54394B9DF}.Release|x86.ActiveCfg = Release|x86
+		{AF5D4A00-B8D7-4E02-949C-21A54394B9DF}.Release|x86.Build.0 = Release|x86
+		{2DA585F0-C2C3-46E2-A638-61AEFA30AB7D}.Debug|x86.ActiveCfg = Debug|x86
+		{2DA585F0-C2C3-46E2-A638-61AEFA30AB7D}.Debug|x86.Build.0 = Debug|x86
+		{2DA585F0-C2C3-46E2-A638-61AEFA30AB7D}.Release|x86.ActiveCfg = Release|x86
+		{2DA585F0-C2C3-46E2-A638-61AEFA30AB7D}.Release|x86.Build.0 = Release|x86
+		{56F98558-26A5-4F6A-8267-5D9A3E5D380C}.Debug|x86.ActiveCfg = Debug|x86
+		{56F98558-26A5-4F6A-8267-5D9A3E5D380C}.Debug|x86.Build.0 = Debug|x86
+		{56F98558-26A5-4F6A-8267-5D9A3E5D380C}.Release|x86.ActiveCfg = Release|x86
+		{56F98558-26A5-4F6A-8267-5D9A3E5D380C}.Release|x86.Build.0 = Release|x86
+		{B1E033D9-19EB-40C2-AA35-D5E988914916}.Debug|x86.ActiveCfg = Debug|x86
+		{B1E033D9-19EB-40C2-AA35-D5E988914916}.Debug|x86.Build.0 = Debug|x86
+		{B1E033D9-19EB-40C2-AA35-D5E988914916}.Release|x86.ActiveCfg = Release|x86
+		{B1E033D9-19EB-40C2-AA35-D5E988914916}.Release|x86.Build.0 = Release|x86
+		{D04D0247-182E-4695-88C8-3645483543D4}.Debug|x86.ActiveCfg = Debug|x86
+		{D04D0247-182E-4695-88C8-3645483543D4}.Debug|x86.Build.0 = Debug|x86
+		{D04D0247-182E-4695-88C8-3645483543D4}.Release|x86.ActiveCfg = Release|x86
+		{D04D0247-182E-4695-88C8-3645483543D4}.Release|x86.Build.0 = Release|x86
+		{D053851D-62B3-4502-A29D-CC1FA2D73533}.Debug|x86.ActiveCfg = Debug|x86
+		{D053851D-62B3-4502-A29D-CC1FA2D73533}.Debug|x86.Build.0 = Debug|x86
+		{D053851D-62B3-4502-A29D-CC1FA2D73533}.Release|x86.ActiveCfg = Release|x86
+		{D053851D-62B3-4502-A29D-CC1FA2D73533}.Release|x86.Build.0 = Release|x86
+		{DD986674-864A-44E4-A5C2-8B26479F3117}.Debug|x86.ActiveCfg = Debug|x86
+		{DD986674-864A-44E4-A5C2-8B26479F3117}.Debug|x86.Build.0 = Debug|x86
+		{DD986674-864A-44E4-A5C2-8B26479F3117}.Release|x86.ActiveCfg = Release|x86
+		{DD986674-864A-44E4-A5C2-8B26479F3117}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B413353-8A0E-40F9-8F18-E40BC131011D}
+	EndGlobalSection
+EndGlobal
